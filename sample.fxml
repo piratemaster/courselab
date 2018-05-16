@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<SplitPane dividerPositions="0.24100156494522693" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+  <items>
+    <AnchorPane maxHeight="718.0" maxWidth="305.0" minHeight="718.0" minWidth="305.0" prefHeight="718.0" prefWidth="305.0" SplitPane.resizableWithParent="true">
+         <children>
+            <Button fx:id="button1" layoutX="35.0" layoutY="37.0" mnemonicParsing="false" onAction="#TreeGenButton" prefHeight="49.0" prefWidth="201.0" text="Сгенерировать дерево">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Button>
+            <Label fx:id="labelInsert" layoutX="62.0" layoutY="114.0" prefHeight="32.0" prefWidth="130.0" text="Добавить элемент" visible="false">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
+            <TextField fx:id="InsertTextBox" depthTest="ENABLE" layoutX="22.0" layoutY="157.0" onKeyPressed="#change" prefHeight="25.0" prefWidth="69.0" visible="false">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </TextField>
+            <Button fx:id="InsertButton" layoutX="144.0" layoutY="157.0" mnemonicParsing="false" onAction="#TreeInsertElementButton" text="Добавить" visible="false">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Button>
+            <Label fx:id="labelDelete" layoutX="70.0" layoutY="209.0" prefHeight="32.0" prefWidth="115.0" text="Удалить элемент" visible="false">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
+            <Button fx:id="DeleteButton" layoutX="150.0" layoutY="271.0" mnemonicParsing="false" onAction="#TreeRemoveElementButton" prefHeight="31.0" prefWidth="86.0" text="Удалить" visible="false">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Button>
+            <ComboBox fx:id="DeleteBox" layoutX="18.0" layoutY="274.0" prefHeight="25.0" prefWidth="101.0" visible="false" />
+         </children>
+      </AnchorPane>
+    <AnchorPane maxHeight="728.0" maxWidth="977.0" minHeight="632.0" minWidth="230.0" prefHeight="728.0" prefWidth="977.0" SplitPane.resizableWithParent="true">
+         <children>
+            <Canvas fx:id="DrawZone" height="720.0" width="967.0" />
+         </children></AnchorPane>
+
+  </items>
+</SplitPane>
