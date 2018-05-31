@@ -49,7 +49,7 @@
     <AnchorPane maxHeight="728.0" maxWidth="977.0" minHeight="632.0" minWidth="230.0" prefHeight="728.0" prefWidth="977.0" SplitPane.resizableWithParent="true">
          <children>
             <Canvas fx:id="DrawZone" height="720.0" width="967.0" />
-         </children></AnchorPane>
-
+         </children>
+    </AnchorPane>
   </items>
 </SplitPane>

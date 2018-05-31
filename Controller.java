@@ -45,9 +45,9 @@ public class Controller{
 
     private static ArrayList<String[]> treeElement=null;
 
-    public static void _printTree (String _treeElement, String elementColor){
+    public static void _printTree (String _treeElement, String elementColor) {
         String[] t = new String[2];
-        t[0] =_treeElement;
+        t[0] = _treeElement;
         t[1] = elementColor;
         treeElement.add(t);
     }
@@ -59,9 +59,10 @@ public class Controller{
         treeElement=null;
         DeleteBox.getItems().clear();
         int testInsertElementsAmount;
+        gc = DrawZone.getGraphicsContext2D();
+        gc.clearRect(0,0,967,720);
         int num;
-        try {
-            gc = DrawZone.getGraphicsContext2D();
+       // try {
             System.out.println("\n\nStart test #1");
             testInsertElementsAmount = rand.nextInt(MAX_ELEMENTS - 1) + 1;
             System.out.println(" Insertion [" + testInsertElementsAmount + "]:");
@@ -72,23 +73,31 @@ public class Controller{
             }
             System.out.println("Tree:");
             treeElement = new ArrayList<>();
-            RedBlackTree.printTree(rbt);
+            RedBlackTree.printTree(rbt,gc);
             for(int i = 0; i<treeElement.size(); i++) {
-                DeleteBox.getItems().add(i,treeElement.get(i)[0]);
+                if((treeElement.get(i)[0]).equals("nil"));
+                else
+                DeleteBox.getItems().add(treeElement.get(i)[0]);
             }
-            labelDelete.setVisible(true);
-            labelInsert.setVisible(true);
-            DeleteBox.setVisible(true);
+            if(!labelDelete.isVisible()) {
+                labelDelete.setVisible(true);
+                labelInsert.setVisible(true);
+                DeleteBox.setVisible(true);
+                InsertTextBox.setVisible(true);
+                InsertButton.setVisible(true);
+                DeleteButton.setVisible(true);
+            }
             DeleteBox.getSelectionModel().selectFirst();
-            InsertTextBox.setVisible(true);
-            InsertButton.setVisible(true);
-            DeleteButton.setVisible(true);
             DeleteButton.setDisable(false);
-            drawing(gc);
-        }
-        catch(Exception e) {
-            System.out.println("Got error: " + e.getMessage());
-        }
+            DeleteBox.getSelectionModel().selectFirst();
+            InsertTextBox.setDisable(false);
+            InsertButton.setDisable(false);
+            //drawing(gc, "RED", 150, 60, "1350");
+            //drawing(gc, treeElement.get(0)[1]);
+        //}
+       // catch(Exception e) {
+       //     System.out.println("Got error: " + e.getMessage());
+       // }
     }
 
     public void TreeInsertElementButton(){
@@ -96,12 +105,8 @@ public class Controller{
         try {
             num = Integer.parseInt(InsertTextBox.getText());
             rbt.add(num);
-            RedBlackTree.printTree(rbt);
+            RedBlackTree.printTree(rbt, gc);
             DeleteBox.getItems().add(Integer.toString(num));
-            if(DeleteBox.isDisable()) {
-                DeleteButton.setDisable(false);
-                DeleteBox.getSelectionModel().selectFirst();
-            }
         }
         catch(Exception e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -112,6 +117,7 @@ public class Controller{
         }
     }
 
+
     public void TreeRemoveElementButton() {
     int num;
         try {
@@ -119,9 +125,13 @@ public class Controller{
             num = Integer.parseInt(DeleteBox.getSelectionModel().getSelectedItem().replaceAll("[\\D]", ""));
             System.out.println(rbt.remove(num));
             DeleteBox.getItems().remove(DeleteBox.getSelectionModel().getSelectedItem());
-            RedBlackTree.printTree(rbt);
+            RedBlackTree.printTree(rbt, gc);
             DeleteBox.getSelectionModel().selectFirst();
-            if(DeleteBox.getItems().isEmpty()) DeleteButton.setDisable(true);
+            if(DeleteBox.getItems().isEmpty()) {
+                DeleteButton.setDisable(true);
+                InsertTextBox.setDisable(true);
+                InsertButton.setDisable(true);
+            }
         }
         catch(Exception e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -131,15 +141,23 @@ public class Controller{
             alert.showAndWait();
         }
     }
-    public void drawing(GraphicsContext gc){
-        gc.setFill(Color.BLACK);
-        double x = DrawZone.getWidth()/2;
-        double y = 60;
-        gc.fillOval(x, y, 30, 30);
-        gc.setFill(Color.WHITE);
-        gc.setFont(Font.font("Times New Roman",15));
-        gc.fillText("-1",x+10,y+20);
-        gc.setFill(Color.BLACK);
-        gc.fillOval(x, y, 30, 30);
+
+
+    public void drawing(GraphicsContext gc, String color, double xDraw, double y, String nodeValue){
+        if(color.equals("nil")) {
+            gc.setFill(Color.color(90, 165, 49));
+            gc.fillRect(xDraw, y, 60, 30);
+            gc.setFill(Color.WHITE);
+            gc.fillText(nodeValue,xDraw+35, y+20);
+        }
+        else {
+            if (color.equals("BLACK")) gc.setFill(Color.BLACK);
+            if (color.equals("RED")) gc.setFill(Color.RED);
+            gc.fillOval(xDraw, y, 30, 30);
+            gc.setFill(Color.WHITE);
+            gc.setFont(Font.font("Arial Black", 15));
+            gc.fillText(nodeValue, xDraw + 10, y + 20);
+            gc.setFill(Color.BLACK);
+        }
     }
 }

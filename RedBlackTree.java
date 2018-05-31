@@ -1,5 +1,7 @@
 package sample;
 
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import sample.IRedBlackTree;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -291,10 +293,10 @@ public class RedBlackTree<T extends Comparable<T>> implements IRedBlackTree<T>, 
      * Печать дерева.
      * @param tree - дерево.
      */
-    public static <T extends Comparable<T>> void printTree(RedBlackTree<T> tree) {
+    public static <T extends Comparable<T>> void printTree(RedBlackTree<T> tree, GraphicsContext gc) {
         ArrayList<RedBlackTree<T>.Node> nodes = new ArrayList<RedBlackTree<T>.Node>();
         nodes.add(0, tree._root);
-        printNodes(tree, nodes);
+        printNodes(tree, nodes, gc);
     }
 
     /**
@@ -305,15 +307,22 @@ public class RedBlackTree<T extends Comparable<T>> implements IRedBlackTree<T>, 
 
     private static Controller __printTree = new Controller();
 
-    //private static int a=0;
+    private static double y = 60;
+    private static double x = 967;
 
-    private static <T extends Comparable<T>> void printNodes(RedBlackTree<T> tree, ArrayList<RedBlackTree<T>.Node> nodes) {
+
+    private static <T extends Comparable<T>> void printNodes(RedBlackTree<T> tree, ArrayList<RedBlackTree<T>.Node> nodes, GraphicsContext gc) {
         int childsCounter = 0;
         int nodesAmount = nodes.size();
         ArrayList<RedBlackTree<T>.Node> childs = new ArrayList<RedBlackTree<T>.Node>();
+        x=x/2;
+        double xDraw;
         for(int i = 0; i < nodesAmount; i++) {
+            if((i+1)<Math.floor(nodesAmount/2)) xDraw = (i+1)*x;
+            else xDraw = 967 - (i+1)*x;
             if(nodes.get(i) != null && nodes.get(i) != tree._nil) {
                 __printTree._printTree(nodes.get(i).getValue().toString(), nodes.get(i).getColorName());
+                __printTree.drawing(gc, nodes.get(i).getColorName(), xDraw, y, nodes.get(i).getValue().toString());
                 System.out.print("(" + nodes.get(i).getValue().toString() + "," + nodes.get(i).getColorName() + ")");
                 if(!nodes.get(i).isLeftFree()) {
                     childs.add(nodes.get(i).getLeft());
@@ -325,16 +334,20 @@ public class RedBlackTree<T extends Comparable<T>> implements IRedBlackTree<T>, 
                     childs.add(nodes.get(i).getRight());
                     childsCounter++;
                 }
-                else
+                else {
                     childs.add(null);
+                }
             }
             else {
+                __printTree._printTree("nil","nil");
+                //__printTree.drawing(__printTree.gc, "nil", xDraw, y, "nil");
                 System.out.print("(nil)");
             }
         }
+        y+=60;
         System.out.print("\n");
         if(childsCounter != 0)
-            printNodes(tree, childs);
+            printNodes(tree, childs, gc);
     }
 
     /**
