@@ -1,6 +1,5 @@
 package sample;
 
-import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import sample.IRedBlackTree;
 import java.util.ArrayList;
@@ -293,10 +292,10 @@ public class RedBlackTree<T extends Comparable<T>> implements IRedBlackTree<T>, 
      * Печать дерева.
      * @param tree - дерево.
      */
-    public static <T extends Comparable<T>> void printTree(RedBlackTree<T> tree, GraphicsContext gc) {
+    public static <T extends Comparable<T>> void printTree(RedBlackTree<T> tree, GraphicsContext gc, double x, double y, int n) {
         ArrayList<RedBlackTree<T>.Node> nodes = new ArrayList<RedBlackTree<T>.Node>();
-        nodes.add(0, tree._root);
-        printNodes(tree, nodes, gc);
+        nodes.add(0,tree._root);
+        printNodes(tree, nodes, gc, x, y, n);
     }
 
     /**
@@ -307,29 +306,34 @@ public class RedBlackTree<T extends Comparable<T>> implements IRedBlackTree<T>, 
 
     private static Controller __printTree = new Controller();
 
-    private static double y = 60;
-    private static double x = 967;
+    //private static int n=__printTree.n;
 
-
-    private static <T extends Comparable<T>> void printNodes(RedBlackTree<T> tree, ArrayList<RedBlackTree<T>.Node> nodes, GraphicsContext gc) {
+    private static <T extends Comparable<T>> void printNodes(RedBlackTree<T> tree, ArrayList<RedBlackTree<T>.Node> nodes, GraphicsContext gc, double x, double y, int n) {
         int childsCounter = 0;
         int nodesAmount = nodes.size();
         ArrayList<RedBlackTree<T>.Node> childs = new ArrayList<RedBlackTree<T>.Node>();
+        /*if(nodesAmount!=Math.pow(2,n) && nodes.get(0)==tree._nil){
+            for(int i = 0; i < (Math.pow(2,n) - nodesAmount); i++) {
+                nodes.add(i, tree._nil);
+            }
+            nodesAmount = nodes.size();
+        }*/
         x=x/2;
         double xDraw;
         for(int i = 0; i < nodesAmount; i++) {
-            if((i+1)<Math.floor(nodesAmount/2)) xDraw = (i+1)*x;
-            else xDraw = 967 - (i+1)*x;
+            xDraw = (2 * i + 1) * x;
             if(nodes.get(i) != null && nodes.get(i) != tree._nil) {
                 __printTree._printTree(nodes.get(i).getValue().toString(), nodes.get(i).getColorName());
                 __printTree.drawing(gc, nodes.get(i).getColorName(), xDraw, y, nodes.get(i).getValue().toString());
-                System.out.print("(" + nodes.get(i).getValue().toString() + "," + nodes.get(i).getColorName() + ")");
+                __printTree.drawgraf(nodes.get(i).isLeftFree(), nodes.get(i).isRightFree(), xDraw, y, gc, i);
+                System.out.print("(" + nodes.get(i).getValue().toString() + "," + nodes.get(i).getColorName() + nodes.get(i).isLeftFree()+nodes.get(i).isRightFree()+")");
                 if(!nodes.get(i).isLeftFree()) {
                     childs.add(nodes.get(i).getLeft());
                     childsCounter++;
                 }
-                else
+                else {
                     childs.add(null);
+                }
                 if(!nodes.get(i).isRightFree()) {
                     childs.add(nodes.get(i).getRight());
                     childsCounter++;
@@ -340,14 +344,16 @@ public class RedBlackTree<T extends Comparable<T>> implements IRedBlackTree<T>, 
             }
             else {
                 __printTree._printTree("nil","nil");
-                //__printTree.drawing(__printTree.gc, "nil", xDraw, y, "nil");
+                childs.add(null);
+                childs.add(null);
                 System.out.print("(nil)");
             }
         }
         y+=60;
-        System.out.print("\n");
+        n++;
+        System.out.print(nodesAmount+"\n");
         if(childsCounter != 0)
-            printNodes(tree, childs, gc);
+            printNodes(tree, childs, gc, x, y, n);
     }
 
     /**
@@ -357,7 +363,8 @@ public class RedBlackTree<T extends Comparable<T>> implements IRedBlackTree<T>, 
      */
     @Override
     public void add(T o) {
-        Node node = _root, temp = _nil;
+        Node node = _root;
+        Node temp = _nil;
         Node newNode = new Node((T)o, NodeColor.RED);
         while(node != null && node != _nil && !node.isFree()) {
             temp = node;
