@@ -30,7 +30,7 @@ public class Controller{
     private static final int MAX_ELEMENTS = 20;
     private static final int MAX_NUMBER = 100;
 
-    public static RedBlackTree<Integer> rbt = new RedBlackTree<Integer>();
+    private static RedBlackTree<Integer> rbt = new RedBlackTree<Integer>();
 
     public void change() {
         InsertTextBox.textProperty().addListener(new ChangeListener<String>() {
@@ -52,10 +52,8 @@ public class Controller{
         treeElement.add(t);
     }
 
-    int n;
 
     public void TreeGenButton(){
-        n=0;
         rbt = null;
         rbt = new RedBlackTree<Integer>();
         treeElement=null;
@@ -78,7 +76,7 @@ public class Controller{
             }
             System.out.println("Tree:");
             treeElement = new ArrayList<>();
-            RedBlackTree.printTree(rbt, gc, x, y, n);
+            RedBlackTree.printTree(rbt, gc, x, y);
             for(int i = 0; i<treeElement.size(); i++) {
                 if((treeElement.get(i)[0]).equals("nil"));
                 else
@@ -106,15 +104,16 @@ public class Controller{
     public void TreeInsertElementButton(){
         int num;
         try {
-            n=0;
             double x=DrawZone.getWidth();
             double y=60;
             gc = DrawZone.getGraphicsContext2D();
             gc.clearRect(0,0,DrawZone.getWidth(),DrawZone.getHeight());
             gc.moveTo(0,0);
+            gc.setStroke(null);
+            gc.setStroke(Color.BLACK);
             num = Integer.parseInt(InsertTextBox.getText());
             rbt.add(num);
-            RedBlackTree.printTree(rbt, gc, x, y, n);
+            RedBlackTree.printTree(rbt, gc, x, y);
             DeleteBox.getItems().add(Integer.toString(num));
         }
         catch(Exception e) {
@@ -130,7 +129,6 @@ public class Controller{
     public void TreeRemoveElementButton() {
     int num;
         try {
-            n=0;
             double x=DrawZone.getWidth();
             double y=60;
             gc = DrawZone.getGraphicsContext2D();
@@ -140,7 +138,7 @@ public class Controller{
             num = Integer.parseInt(DeleteBox.getSelectionModel().getSelectedItem().replaceAll("[\\D]", ""));
             System.out.println(rbt.remove(num));
             DeleteBox.getItems().remove(DeleteBox.getSelectionModel().getSelectedItem());
-            RedBlackTree.printTree(rbt, gc, x, y, n);
+            RedBlackTree.printTree(rbt, gc, x, y);
             DeleteBox.getSelectionModel().selectFirst();
             if(DeleteBox.getItems().isEmpty()) {
                 DeleteButton.setDisable(true);
@@ -175,20 +173,24 @@ public class Controller{
             gc.setFill(Color.BLACK);
         }
     }
-    public void drawgraf(boolean isLeftFree, boolean isRightFree, double xDraw, double y, GraphicsContext gc, int i){
-        if(isLeftFree==false){
-            gc.moveTo(xDraw, y);
+    public void drawgraf(boolean isLeftFree, boolean isRightFree, double x, double y, GraphicsContext gc, int i){
+        double xDraw;
+        double xDraw1 = (2 * i + 1) * x + 10;
+        if(!isLeftFree){
+            gc.moveTo(xDraw1+5, y + 30);
+            xDraw = (2 * i) * x + x/2;
             gc.setFill(Color.BLACK);
-            gc.lineTo((xDraw/2), y + 60);
+            gc.lineTo((xDraw+15), y + 60);
             gc.stroke();
-            gc.moveTo(xDraw, y);
+            gc.moveTo(xDraw, y + 30);
         }
-        if(isRightFree==false){
-            gc.moveTo(xDraw, y);
+        if(!isRightFree){
+            gc.moveTo(xDraw1+5, y + 30);
+            xDraw = (2 * i + 2) * x - x/2 + 10;
             gc.setFill(Color.BLACK);
-            gc.lineTo((xDraw + xDraw/2), y + 60);
+            gc.lineTo((xDraw+5), y + 60);
             gc.stroke();
-            gc.moveTo(xDraw, y);
+            gc.moveTo(xDraw, y + 30);
         }
     }
 }
