@@ -9,14 +9,15 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Random;
 
 
 public class Controller{
     @FXML
     Button button1, InsertButton, DeleteButton;
     @FXML
-    Label label1, labelInsert, labelDelete;
+    Label labelInsert, labelDelete;
     @FXML
     ComboBox<String> DeleteBox;
     @FXML
@@ -24,13 +25,13 @@ public class Controller{
     @FXML
     Canvas DrawZone;
 
-    GraphicsContext gc;
+    private GraphicsContext gc;
 
     private static Random rand = new Random();
     private static final int MAX_ELEMENTS = 20;
     private static final int MAX_NUMBER = 100;
 
-    private static RedBlackTree<Integer> rbt = new RedBlackTree<Integer>();
+    private static RedBlackTree<Integer> rbt = new RedBlackTree<>();
 
     public void change() {
         InsertTextBox.textProperty().addListener(new ChangeListener<String>() {
@@ -43,44 +44,38 @@ public class Controller{
         });
     }
 
-    private static ArrayList<String[]> treeElement=null;
+    private static ArrayList<String> treeElement=null;
 
-    public static void _printTree (String _treeElement, String elementColor) {
-        String[] t = new String[2];
-        t[0] = _treeElement;
-        t[1] = elementColor;
-        treeElement.add(t);
+    public static void _printTree (String _treeElement) {
+        treeElement.add(_treeElement);
     }
 
 
     public void TreeGenButton(){
         rbt = null;
-        rbt = new RedBlackTree<Integer>();
+        rbt = new RedBlackTree<>();
         treeElement=null;
         DeleteBox.getItems().clear();
         int testInsertElementsAmount;
         double x=DrawZone.getWidth();
         double y=60;
         gc = DrawZone.getGraphicsContext2D();
+        gc.beginPath();
         gc.clearRect(0,0,DrawZone.getWidth(),DrawZone.getHeight());
         gc.moveTo(0,0);
         int num;
-       try {
-            System.out.println("\n\nStart test #1");
+        try {
             testInsertElementsAmount = rand.nextInt(MAX_ELEMENTS - 1) + 1;
-            System.out.println(" Insertion [" + testInsertElementsAmount + "]:");
-            for(int j = 0; j < testInsertElementsAmount; j++) {
+            for(int i = 0; i < testInsertElementsAmount; i++) {
                 num = rand.nextInt(MAX_NUMBER);
-                System.out.println("  Insert " + num + " into tree");
                 rbt.add(num);
             }
-            System.out.println("Tree:");
             treeElement = new ArrayList<>();
             RedBlackTree.printTree(rbt, gc, x, y);
             for(int i = 0; i<treeElement.size(); i++) {
-                if((treeElement.get(i)[0]).equals("nil"));
+                if((treeElement.get(i)).equals("nil"));
                 else
-                DeleteBox.getItems().add(treeElement.get(i)[0]);
+                    DeleteBox.getItems().add(treeElement.get(i));
             }
             if(!labelDelete.isVisible()) {
                 labelDelete.setVisible(true);
@@ -97,24 +92,36 @@ public class Controller{
             InsertButton.setDisable(false);
        }
        catch(Exception e) {
-            System.out.println("Got error: " + e.getMessage());
+           Alert alert = new Alert(Alert.AlertType.ERROR);
+           alert.setTitle("Ошибка");
+           alert.setHeaderText(null);
+           alert.setContentText(e.getMessage());
+           alert.showAndWait();
        }
     }
 
     public void TreeInsertElementButton(){
         int num;
         try {
-            double x=DrawZone.getWidth();
-            double y=60;
-            gc = DrawZone.getGraphicsContext2D();
-            gc.clearRect(0,0,DrawZone.getWidth(),DrawZone.getHeight());
-            gc.moveTo(0,0);
-            gc.setStroke(null);
-            gc.setStroke(Color.BLACK);
-            num = Integer.parseInt(InsertTextBox.getText());
-            rbt.add(num);
-            RedBlackTree.printTree(rbt, gc, x, y);
-            DeleteBox.getItems().add(Integer.toString(num));
+            if(DeleteBox.getItems().size()<30) {
+                double x = DrawZone.getWidth();
+                double y = 60;
+                gc = DrawZone.getGraphicsContext2D();
+                gc.beginPath();
+                gc.clearRect(0,0,DrawZone.getWidth(),DrawZone.getHeight());
+                gc.moveTo(0,0);
+                num = Integer.parseInt(InsertTextBox.getText());
+                rbt.add(num);
+                RedBlackTree.printTree(rbt, gc, x, y);
+                DeleteBox.getItems().add(Integer.toString(num));
+            }
+            else {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Ошибка");
+                alert.setHeaderText(null);
+                alert.setContentText("Превышено количество элементов");
+                alert.showAndWait();
+            }
         }
         catch(Exception e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -132,11 +139,12 @@ public class Controller{
             double x=DrawZone.getWidth();
             double y=60;
             gc = DrawZone.getGraphicsContext2D();
+            gc.beginPath();
             gc.clearRect(0,0,DrawZone.getWidth(),DrawZone.getHeight());
             gc.moveTo(0,0);
             DeleteBox.getSelectionModel().selectFirst();
             num = Integer.parseInt(DeleteBox.getSelectionModel().getSelectedItem().replaceAll("[\\D]", ""));
-            System.out.println(rbt.remove(num));
+            rbt.remove(num);
             DeleteBox.getItems().remove(DeleteBox.getSelectionModel().getSelectedItem());
             RedBlackTree.printTree(rbt, gc, x, y);
             DeleteBox.getSelectionModel().selectFirst();
@@ -158,12 +166,6 @@ public class Controller{
 
     public void drawing(GraphicsContext gc, String color, double xDraw, double y, String nodeValue){
         if(!color.equals("nil")) {
-          /*  gc.setFill(Color.color(0.9, 0.165, 0.49));
-            gc.fillRect(xDraw, y, 60, 30);
-            gc.setFill(Color.WHITE);
-            gc.fillText(nodeValue,xDraw+35, y+20);
-        }*/
-        //else {
             if (color.equals("BLACK")) gc.setFill(Color.BLACK);
             if (color.equals("RED")) gc.setFill(Color.RED);
             gc.fillOval(xDraw, y, 30, 30);
@@ -175,22 +177,21 @@ public class Controller{
     }
     public void drawgraf(boolean isLeftFree, boolean isRightFree, double x, double y, GraphicsContext gc, int i){
         double xDraw;
-        double xDraw1 = (2 * i + 1) * x + 10;
+        double xDraw1 = (2 * i + 1) * x + 10 - 10;
         if(!isLeftFree){
             gc.moveTo(xDraw1+5, y + 30);
-            xDraw = (2 * i) * x + x/2;
+            xDraw = (2 * i) * x + x/2 - 10;
             gc.setFill(Color.BLACK);
             gc.lineTo((xDraw+15), y + 60);
-            gc.stroke();
             gc.moveTo(xDraw, y + 30);
         }
         if(!isRightFree){
             gc.moveTo(xDraw1+5, y + 30);
-            xDraw = (2 * i + 2) * x - x/2 + 10;
+            xDraw = (2 * i + 2) * x - x/2 + 10 - 10;
             gc.setFill(Color.BLACK);
             gc.lineTo((xDraw+5), y + 60);
-            gc.stroke();
             gc.moveTo(xDraw, y + 30);
         }
+        gc.stroke();
     }
 }
