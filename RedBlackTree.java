@@ -1,5 +1,6 @@
 package sample;
 
+import javafx.beans.binding.IntegerBinding;
 import javafx.scene.canvas.GraphicsContext;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -250,7 +251,7 @@ public class RedBlackTree<T extends Comparable<T>> implements IRedBlackTree<T>, 
         Node newNode = new Node((T)o, NodeColor.RED);
         while(node != null && node != _nil && !node.isFree()) {
             temp = node;
-            if(newNode.getValue().compareTo(node.getValue()) < 0)
+            if((Integer)newNode.getValue() < (Integer)node.getValue() || newNode.getValue().equals(node.getValue()))
                 node = node.getLeft();
             else
                 node = node.getRight();
@@ -259,7 +260,7 @@ public class RedBlackTree<T extends Comparable<T>> implements IRedBlackTree<T>, 
         if(temp == _nil)
             _root.setValue(newNode.getValue());
         else {
-            if(newNode.getValue().compareTo(temp.getValue()) < 0)
+            if((Integer)newNode.getValue() < (Integer)temp.getValue() || newNode.getValue().equals(temp.getValue()))
                 temp.setLeft(newNode);
             else
                 temp.setRight(newNode);

@@ -44,6 +44,8 @@ public class Controller{
         });
     }
 
+    private Alert alert = new Alert(Alert.AlertType.ERROR);
+
     private static ArrayList<String> treeElement=null;
 
     public static void _printTree (String _treeElement) {
@@ -68,7 +70,7 @@ public class Controller{
             testInsertElementsAmount = rand.nextInt(MAX_ELEMENTS - 1) + 1;
             for(int i = 0; i < testInsertElementsAmount; i++) {
                 num = rand.nextInt(MAX_NUMBER);
-                rbt.add(num);
+                if(i == 0 || !rbt.contains(num)) rbt.add(num);
             }
             treeElement = new ArrayList<>();
             RedBlackTree.printTree(rbt, gc, x, y);
@@ -92,7 +94,6 @@ public class Controller{
             InsertButton.setDisable(false);
        }
        catch(Exception e) {
-           Alert alert = new Alert(Alert.AlertType.ERROR);
            alert.setTitle("Ошибка");
            alert.setHeaderText(null);
            alert.setContentText(e.getMessage());
@@ -104,19 +105,26 @@ public class Controller{
         int num;
         try {
             if(DeleteBox.getItems().size()<30) {
-                double x = DrawZone.getWidth();
-                double y = 60;
-                gc = DrawZone.getGraphicsContext2D();
-                gc.beginPath();
-                gc.clearRect(0,0,DrawZone.getWidth(),DrawZone.getHeight());
-                gc.moveTo(0,0);
                 num = Integer.parseInt(InsertTextBox.getText());
-                rbt.add(num);
-                RedBlackTree.printTree(rbt, gc, x, y);
-                DeleteBox.getItems().add(Integer.toString(num));
+                if(rbt.contains(num)){
+                    alert.setTitle("Ошибка");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Такой элемент присутствует в дереве");
+                    alert.showAndWait();
+                }
+                else {
+                    double x = DrawZone.getWidth();
+                    double y = 60;
+                    gc = DrawZone.getGraphicsContext2D();
+                    gc.beginPath();
+                    gc.clearRect(0,0,DrawZone.getWidth(),DrawZone.getHeight());
+                    gc.moveTo(0,0);
+                    rbt.add(num);
+                    RedBlackTree.printTree(rbt, gc, x, y);
+                    DeleteBox.getItems().add(Integer.toString(num));
+                }
             }
             else {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Ошибка");
                 alert.setHeaderText(null);
                 alert.setContentText("Превышено количество элементов");
@@ -124,7 +132,6 @@ public class Controller{
             }
         }
         catch(Exception e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Ошибка");
             alert.setHeaderText(null);
             alert.setContentText("Заполните поле ввода");
@@ -150,12 +157,12 @@ public class Controller{
             DeleteBox.getSelectionModel().selectFirst();
             if(DeleteBox.getItems().isEmpty()) {
                 DeleteButton.setDisable(true);
+                DeleteBox.setDisable(true);
                 InsertTextBox.setDisable(true);
                 InsertButton.setDisable(true);
             }
         }
         catch(Exception e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Ошибка");
             alert.setHeaderText(null);
             alert.setContentText("Ошибка");
